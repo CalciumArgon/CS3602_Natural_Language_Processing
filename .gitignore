@@ -1,0 +1,10 @@
+cache/
+__pycache__/
+
+*.bin
+*.pt
+*.pth
+
+checkpoints/
+
+test.py

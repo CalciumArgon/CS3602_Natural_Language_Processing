@@ -1,0 +1,64 @@
+[
+    [
+        {
+            "utt_id": 1,
+            "asr_1best": "取消导航",
+            "semantic": [],
+            "pred": []
+        }
+    ],
+    [
+        {
+            "utt_id": 1,
+            "asr_1best": "导航",
+            "semantic": [],
+            "pred": []
+        }
+    ],
+    [
+        {
+            "utt_id": 1,
+            "asr_1best": "朝阳县农机销售有限公司导航",
+            "semantic": [],
+            "pred": []
+        }
+    ],
+    [
+        {
+            "utt_id": 1,
+            "asr_1best": "我想导航到上海交通大学",
+            "semantic": [],
+            "pred": []
+        },
+        {
+            "utt_id": 2,
+            "asr_1best": "导航到复旦旁边的那个校区",
+            "semantic": [],
+            "pred": []
+        }
+    ],
+    [
+        {
+            "utt_id": 1,
+            "asr_1best": "我想导航到上海交通大学在复旦旁边的那个校区",
+            "semantic": [],
+            "pred": []
+        }
+    ],
+    [
+        {
+            "utt_id": 1,
+            "asr_1best": "我想导航到上海j四大学在复旦旁边的那个校区",
+            "semantic": [],
+            "pred": []
+        }
+    ],
+    [
+        {
+            "utt_id": 1,
+            "asr_1best": "从天安门最快导航到上海交通大学附近",
+            "semantic": [],
+            "pred": []
+        }
+    ]
+]
