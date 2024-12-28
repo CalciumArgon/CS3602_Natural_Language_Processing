@@ -7,4 +7,6 @@ __pycache__/
 
 checkpoints/
 
+data/prediction.json
+
 test.py
