@@ -15,7 +15,7 @@ class BertSLU(nn.Module):
         super(BertSLU, self).__init__()
         self.config = config
 
-        self.device = config.device
+        self.device = config.device if config.device >= 0 else torch.device("cpu")
         self._init_bert_model(config)
 
         if config.use_bert_state == 'fuse':
@@ -24,6 +24,8 @@ class BertSLU(nn.Module):
             self.fuse_embed_layer = None
 
         self.num_tags = config.num_tags
+        print(f"Number of tags: {self.num_tags}")
+        assert False
         if config.decoder_cell == "FNN":
             self.output_layer = TaggingFNNDecoder(self.bert_hidden_size, self.num_tags, config.tag_pad_idx)
         else:

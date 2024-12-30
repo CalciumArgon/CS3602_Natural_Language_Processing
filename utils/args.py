@@ -27,16 +27,22 @@ def add_argument_base(arg_parser):
     arg_parser.add_argument('--gamma', type=float, default=0.1, help='learning rate decay rate')
     arg_parser.add_argument('--max_epoch', type=int, default=100, help='terminate after maximum epochs')
     #### Common Encoder Hyperparams ####
-    arg_parser.add_argument('--encoder_cell', help='root of data', default='bert',
-                                choices=['bert', 'macbert', 'robert', 'LSTM', 'GRU', 'RNN'])
-    arg_parser.add_argument('--decoder_cell', default='FNN', choices=['FNN', 'LSTM', 'GRU', 'RNN'], help='root of data')
+    arg_parser.add_argument('--encoder_cell', help='encoder cell', default='bert',
+                            choices=['bert', 'macbert', 'robert', 'LSTM', 'GRU', 'RNN'])
+    arg_parser.add_argument('--decoder_cell', default='FNN', choices=['FNN', 'LSTM', 'GRU', 'RNN'], help='decoder cell')
     arg_parser.add_argument('--dropout', type=float, default=0.2, help='feature dropout rate')
     arg_parser.add_argument('--embed_size', default=768, type=int, help='Size of word embeddings')
     arg_parser.add_argument('--hidden_size', default=512, type=int, help='hidden size')
     arg_parser.add_argument('--num_layer', default=2, type=int, help='number of layer')
+    arg_parser.add_argument('--ONE_EPOCH', action='store_true', help='TEST PROCESS train 1 epoch and assert False')
 
     #### BERT Model ####
     arg_parser.add_argument('--lock_bert', action='store_true', help='Lock BERT parameters')
     arg_parser.add_argument('--lock_bert_ratio', type=float, default=0, help='Lock ratio of BERT parameters')
     arg_parser.add_argument('--use_bert_state', type=str, choices=['mean', 'last', 'fuse'], default='last', help='Use mean/last/fuse hidden-state')
+    arg_parser.add_argument('--fuse_chunk', action='store_true', help='Fuse the word-chunk information into BERT')
+    # arg_parser.add_argument("--fuse_decoder", default="GRU", choices=['LSTM', 'GRU', 'RNN'], help="Decoder for chunk word")
+
+    #### Data Augmentation ####
+    arg_parser.add_argument('--replace_place_name', action='store_true', help='Replace place name to create new train data')
     return arg_parser

@@ -14,26 +14,29 @@ from utils.batch import from_example_list
 from utils.vocab import PAD
 from torch.optim.lr_scheduler import MultiStepLR
 from model.bert_baseline_model import BertSLU
-from utils.tensorBoard import visualizer
+from model.bert_fuse_model import FuseBertSLU
 
 args = init_args(sys.argv[1:])
 
-time_stramp = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
+# time_stramp = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
 root_path = os.path.abspath(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-model_save_path = os.path.join(root_path, "checkpoints", args.name + '_' + time_stramp)
+model_save_path = os.path.join(root_path, "checkpoints", args.name)
 if not os.path.exists(model_save_path):
     os.makedirs(model_save_path, exist_ok=True)
 
 set_random_seed(args.seed)
 device = set_torch_device(args.device)
-# writer = visualizer(args)
 print("Initialization finished ...")
 print("Random seed is set to %d" % (args.seed))
 print("Use GPU with index %s" % (args.device) if args.device >= 0 else "Use CPU as target torch device")
 print("[Work on {}]".format(device))
 
 start_time = time.time()
-train_path = os.path.join(args.dataroot, 'train.json')
+if not args.replace_place_name:
+    train_path = os.path.join(args.dataroot, 'train.json')
+else:
+    train_path = os.path.join(args.dataroot, 'train_aug.json')
+
 dev_path = os.path.join(args.dataroot, 'development.json')
 Example.configuration(args.dataroot, train_path=train_path, word2vec_path=args.word2vec_path)
 train_dataset = Example.load_dataset(train_path)
@@ -47,11 +50,17 @@ args.num_tags = Example.label_vocab.num_tags
 args.tag_pad_idx = Example.label_vocab.convert_tag_to_idx(PAD)
 
 
-model = BertSLU(args).to(device)
-model_name = f"bert-{args.encoder_cell}-lock{args.lock_bert}.bin"
+if not args.fuse_chunk:
+    model = BertSLU(args).to(device)
+else:
+    model = FuseBertSLU(args).to(device)
+# ==========================================
+model_name = f"{args.encoder_cell}-{args.decoder_cell}-lock{args.lock_bert_ratio}-replace{args.replace_place_name}.bin"
+# ==========================================
 
 if args.testing:
-    check_point = torch.load(open(args.ckpt, 'rb'), map_location=device)
+    # check_point = torch.load(open(args.ckpt, 'rb'), map_location=device)
+    check_point = torch.load(open(os.path.join(model_save_path, model_name), 'rb'), map_location=device)
     model.load_state_dict(check_point['model'])
     print("Load saved model from root path")
 
@@ -135,10 +144,12 @@ if not args.testing:
             scheduler.step()
             count += 1
 
-            if j % 50 == 0:
+            if j > 0 and j % 50 == 0:
                 start_time = time.time()
                 metrics, dev_loss = decode('dev')
                 dev_acc, dev_fscore = metrics['acc'], metrics['fscore']
+                if args.ONE_EPOCH:
+                    assert False, "One epoch done: {}".format((dev_loss,dev_acc,dev_fscore))
                 # print('Evaluation: \tEpoch: %d\tTime: %.4f\tDev acc: %.2f\tDev fscore(p/r/f): (%.2f/%.2f/%.2f)' % (i, time.time() - start_time, dev_acc, dev_fscore['precision'], dev_fscore['recall'], dev_fscore['fscore']))
                 if dev_acc > best_result['dev_acc']:
                     best_result['dev_loss'], best_result['dev_acc'], best_result['dev_f1'], best_result['iter'] = dev_loss, dev_acc, dev_fscore, i
