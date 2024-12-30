@@ -6,6 +6,7 @@ __pycache__/
 *.pth
 
 res/
+utils/plot.py
 
 checkpoints/
 
