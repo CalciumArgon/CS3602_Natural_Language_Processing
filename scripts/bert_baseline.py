@@ -60,7 +60,10 @@ model_name = f"{args.encoder_cell}-{args.decoder_cell}-lock{args.lock_bert_ratio
 
 if args.testing:
     # check_point = torch.load(open(args.ckpt, 'rb'), map_location=device)
-    check_point = torch.load(open(os.path.join(model_save_path, model_name), 'rb'), map_location=device)
+    if args.ckpt is not None:
+        check_point = torch.load(open(args.ckpt, 'rb'), map_location=device)
+    else:
+        check_point = torch.load(open(os.path.join(model_save_path, model_name), 'rb'), map_location=device)
     model.load_state_dict(check_point['model'])
     print("Load saved model from root path")
 
